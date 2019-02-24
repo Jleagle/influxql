@@ -162,7 +162,7 @@ func (f conditions) string() string {
 		ret = append(ret, field.string())
 	}
 
-	return "WHERE " + strings.Join(ret, ", ")
+	return "WHERE " + strings.Join(ret, " AND ")
 }
 
 func (w Where) string() string {
