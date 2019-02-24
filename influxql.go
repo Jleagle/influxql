@@ -17,8 +17,8 @@ type builder struct {
 	groupBy     groupBy
 	where       conditions
 	fill        fill
-	limit       *int
-	seriesLimit *int
+	limit       *limit
+	seriesLimit *limit
 }
 
 func (b builder) String() string {
@@ -43,6 +43,14 @@ func (b builder) String() string {
 
 	if b.fill != (fill{}) {
 		ret = append(ret, b.fill.string())
+	}
+
+	if b.limit != nil {
+		ret = append(ret, b.limit.string(false))
+	}
+
+	if b.seriesLimit != nil {
+		ret = append(ret, b.seriesLimit.string(true))
 	}
 
 	return strings.Join(ret, " ")
@@ -256,4 +264,31 @@ func (f fill) string() string {
 		return "FILL(" + f.fill + ")"
 	}
 	return "FILL(" + f.fill + ", " + strconv.Itoa(f.number) + ")"
+}
+
+// Limit
+type limit int
+
+func (b *builder) SetLimit(l int) *builder {
+
+	x := limit(l)
+	b.limit = &x
+	return b
+}
+
+func (b *builder) SetSeriesLimit(l int) *builder {
+
+	x := limit(l)
+	b.seriesLimit = &x
+	return b
+}
+
+func (l limit) string(series bool) string {
+
+	ret := "LIMIT " + strconv.Itoa(int(l))
+
+	if series {
+		return "S" + ret
+	}
+	return ret
 }
