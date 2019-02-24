@@ -167,12 +167,17 @@ func (f conditions) string() string {
 
 func (w Where) string() string {
 
-	ret := w.field
-	if !strings.ContainsAny(ret, "()-+*/") {
-		ret = `"` + ret + `"`
+	field := w.field
+	if !strings.ContainsAny(field, "()-+*/") {
+		field = `"` + field + `"`
 	}
 
-	return ret + " " + string(w.symbol) + " '" + fmt.Sprint(w.value) + "'"
+	value := fmt.Sprint(w.value)
+	if !strings.ContainsAny(value, "()-+*/") {
+		value = "'" + fmt.Sprint(w.value) + "'"
+	}
+
+	return field + " " + string(w.symbol) + " " + value
 }
 
 // Group By
