@@ -2,6 +2,7 @@ package influxql
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -40,7 +41,7 @@ func (b builder) String() string {
 		ret = append(ret, b.groupBy.string())
 	}
 
-	if b.fill != "" {
+	if b.fill != (fill{}) {
 		ret = append(ret, b.fill.string())
 	}
 
@@ -214,23 +215,45 @@ func (g groupBy) string() string {
 }
 
 // Fill
-type fill string
+type fill struct {
+	fill   string
+	number int
+}
 
-const (
-	FillNull     fill = "null"
-	FillPrevious      = "previous"
-	FillNumbers       = "number"
-	FillNone          = "none"
-	FillLinear        = "linear"
-)
+func (b *builder) SetFillNull() *builder {
 
-func (b *builder) SetFill(fill fill, number ...int) *builder {
+	b.fill = fill{fill: "null"}
+	return b
+}
 
-	b.fill = fill
+func (b *builder) SetFillPrevious() *builder {
 
+	b.fill = fill{fill: "previous"}
+	return b
+}
+
+func (b *builder) SetFillNumber(number int) *builder {
+
+	b.fill = fill{fill: "number", number: number}
+	return b
+}
+
+func (b *builder) SetFillNone() *builder {
+
+	b.fill = fill{fill: "none"}
+	return b
+}
+
+func (b *builder) SetFillLinear() *builder {
+
+	b.fill = fill{fill: "linear"}
 	return b
 }
 
 func (f fill) string() string {
-	return "FILL(" + string(f) + ")"
+
+	if f.number == 0 {
+		return "FILL(" + f.fill + ", " + strconv.Itoa(f.number) + ")"
+	}
+	return "FILL(" + f.fill + ")"
 }
