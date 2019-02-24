@@ -162,7 +162,7 @@ func (f conditions) string() string {
 		ret = append(ret, field.string())
 	}
 
-	return strings.Join(ret, ", ")
+	return "WHERE " + strings.Join(ret, ", ")
 }
 
 func (w Where) string() string {
@@ -172,7 +172,7 @@ func (w Where) string() string {
 		ret = `"` + ret + `"`
 	}
 
-	return "WHERE " + ret + " " + string(w.symbol) + " '" + fmt.Sprint(w.value) + "'"
+	return ret + " " + string(w.symbol) + " '" + fmt.Sprint(w.value) + "'"
 }
 
 // Group By
