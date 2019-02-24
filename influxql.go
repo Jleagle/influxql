@@ -168,7 +168,7 @@ func (f conditions) string() string {
 func (w Where) string() string {
 
 	ret := w.field
-	if ret != "time" {
+	if !strings.ContainsAny(ret, "()-+*/") {
 		ret = `"` + ret + `"`
 	}
 
