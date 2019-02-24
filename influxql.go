@@ -253,7 +253,7 @@ func (b *builder) SetFillLinear() *builder {
 func (f fill) string() string {
 
 	if f.number == 0 {
-		return "FILL(" + f.fill + ", " + strconv.Itoa(f.number) + ")"
+		return "FILL(" + f.fill + ")"
 	}
-	return "FILL(" + f.fill + ")"
+	return "FILL(" + f.fill + ", " + strconv.Itoa(f.number) + ")"
 }
