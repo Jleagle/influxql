@@ -1,1 +1,1 @@
-# influxql
+# influxql query builer
