@@ -135,23 +135,13 @@ func (f from) string() (str string) {
 }
 
 // Where
-type whereSymbol string
-
-const (
-	whereSumbolEq whereSymbol = "="
-	whereSymbolNe             = "!="
-	whereSymbolGt             = ">"
-	whereSymbolLt             = "<"
-	whereSymbolNt             = "<>"
-)
-
 type Where struct {
 	field  string
-	symbol whereSymbol
+	symbol string
 	value  interface{}
 }
 
-func (b *builder) AddWhere(field string, symbol whereSymbol, value interface{}) *builder {
+func (b *builder) AddWhere(field string, symbol string, value interface{}) *builder {
 
 	b.where = append(b.where, Where{
 		field:  field,
