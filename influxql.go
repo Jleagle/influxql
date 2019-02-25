@@ -144,23 +144,6 @@ func (f from) string() (str string) {
 }
 
 // Where
-type Where struct {
-	field  string
-	symbol string
-	value  interface{}
-}
-
-func (b *builder) AddWhere(field string, symbol string, value interface{}) *builder {
-
-	b.where = append(b.where, Where{
-		field:  field,
-		symbol: symbol,
-		value:  value,
-	})
-
-	return b
-}
-
 type conditions []Where
 
 func (f conditions) string() string {
@@ -174,7 +157,35 @@ func (f conditions) string() string {
 	return "WHERE " + strings.Join(ret, " AND ")
 }
 
+type Where struct {
+	field  string
+	symbol string
+	value  interface{}
+	raw    string
+}
+
+func (b *builder) AddWhere(field string, symbol string, value interface{}) *builder {
+
+	b.where = append(b.where, Where{
+		field:  field,
+		symbol: symbol,
+		value:  value,
+	})
+
+	return b
+}
+
+func (b *builder) AddWhereRaw(raw string) *builder {
+
+	b.where = append(b.where, Where{raw: raw})
+	return b
+}
+
 func (w Where) string() string {
+
+	if w.raw != "" {
+		return w.raw
+	}
 
 	field := w.field
 	if !strings.ContainsAny(field, "()-+*/") {
