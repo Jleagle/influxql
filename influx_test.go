@@ -22,6 +22,11 @@ func TestSelect(t *testing.T) {
 	if builder.String() != `SELECT func1("col1"), "col2", "col3" as "col3alias"` {
 		t.Error("select field alias")
 	}
+
+	builder.AddSelect("func1(col1)", "func1_col")
+	if builder.String() != `SELECT func1("col1"), "col2", "col3" as "col3alias", func1("col1") as "func1_col"` {
+		t.Error("func and alias: " + builder.String())
+	}
 }
 
 func TestFrom(t *testing.T) {

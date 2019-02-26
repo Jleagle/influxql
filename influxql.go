@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	regexNeedsQuotes      = `\(([a-zA-Z0-9]+)\)`
-	regexContainsFunction = `[a-zA-Z0-9]+\(.*?\)`
+	regexNeedsQuotes      = `\(([a-zA-Z0-9_]+)\)`
+	regexContainsFunction = `[a-zA-Z0-9_]+\(.*?\)`
 )
 
 func NewBuilder() *builder {
@@ -290,6 +290,10 @@ func doubleQuote(field string) string {
 	re := regexp.MustCompile(regexNeedsQuotes)
 	if re.MatchString(field) {
 		return re.ReplaceAllString(field, `("$1")`)
+	}
+
+	if regexp.MustCompile(regexContainsFunction).MatchString(field) {
+		return field
 	}
 
 	field = strings.TrimSuffix(field, `"`)
