@@ -7,7 +7,10 @@ import (
 	"strings"
 )
 
-const functionRegex = `\(([a-zA-Z0-9]+)\)`
+const (
+	regexNeedsQuotes      = `\(([a-zA-Z0-9]+)\)`
+	regexContainsFunction = `[a-zA-Z0-9]+\(.*?\)`
+)
 
 func NewBuilder() *builder {
 	return &builder{}
@@ -179,7 +182,7 @@ func (w Where) string() string {
 
 	value := fmt.Sprint(w.value)
 
-	if !regexp.MustCompile(functionRegex).MatchString(value) {
+	if !regexp.MustCompile(regexContainsFunction).MatchString(value) {
 		value = "'" + fmt.Sprint(w.value) + "'"
 	}
 
@@ -284,7 +287,7 @@ func doubleQuote(field string) string {
 		return strings.Replace(field, `"`, "", -1)
 	}
 
-	re := regexp.MustCompile(functionRegex)
+	re := regexp.MustCompile(regexNeedsQuotes)
 	if re.MatchString(field) {
 		return re.ReplaceAllString(field, `("$1")`)
 	}

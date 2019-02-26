@@ -67,6 +67,11 @@ func TestWhere(t *testing.T) {
 	if builder.String() != `WHERE "col1" = '1' AND f("col2") = '2' AND col3 = '3'` {
 		t.Error("where raw")
 	}
+
+	builder.AddWhere("time", ">", "NOW()-7d")
+	if builder.String() != `WHERE "col1" = '1' AND f("col2") = '2' AND col3 = '3' AND time > NOW()-7d` {
+		t.Error("where time: " + builder.String())
+	}
 }
 
 func TestFill(t *testing.T) {
