@@ -2,9 +2,12 @@ package influxql
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
+
+const functionRegex = `\(([a-zA-Z0-9]+)\)`
 
 func NewBuilder() *builder {
 	return &builder{}
@@ -87,26 +90,13 @@ func (b *builder) AddSelect(column string, alias string) *builder {
 
 func (f field) string() string {
 
-	ret := f.column
-
-	if strings.ContainsAny(ret, "()") {
-
-		if !strings.ContainsAny(ret, `"`) {
-			ret = strings.Replace(ret, ")", `")`, 1)
-			ret = strings.Replace(ret, "(", `("`, 1)
-		}
-
-	} else {
-
-		ret = `"` + ret + `"`
-	}
+	ret := doubleQuote(f.column)
 
 	if f.alias != "" {
-		ret += ` as "` + f.alias + `"`
+		ret += " as " + doubleQuote(f.alias)
 	}
 
 	return "SELECT " + ret
-
 }
 
 // From
@@ -131,13 +121,13 @@ func (f from) string() (str string) {
 
 	var ret []string
 	if f.database != "" {
-		ret = append(ret, `"`+f.database+`"`)
+		ret = append(ret, doubleQuote(f.database))
 	}
 	if f.retention != "" {
-		ret = append(ret, `"`+f.retention+`"`)
+		ret = append(ret, doubleQuote(f.retention))
 	}
 	if f.measurement != "" {
-		ret = append(ret, `"`+f.measurement+`"`)
+		ret = append(ret, doubleQuote(f.measurement))
 	}
 
 	return "FROM " + strings.Join(ret, ".")
@@ -187,17 +177,13 @@ func (w Where) string() string {
 		return w.raw
 	}
 
-	field := w.field
-	if !strings.ContainsAny(field, "()-+*/") {
-		field = `"` + field + `"`
-	}
-
 	value := fmt.Sprint(w.value)
-	if !strings.ContainsAny(value, "()-+*/") {
+
+	if !regexp.MustCompile(functionRegex).MatchString(value) {
 		value = "'" + fmt.Sprint(w.value) + "'"
 	}
 
-	return field + " " + string(w.symbol) + " " + value
+	return doubleQuote(w.field) + " " + string(w.symbol) + " " + value
 }
 
 // Group By
@@ -205,20 +191,7 @@ type groupBy []string
 
 func (b *builder) AddGroupBy(groupBy string) *builder {
 
-	if strings.ContainsAny(groupBy, "()") {
-
-		if !strings.ContainsAny(groupBy, `"`) && !strings.ContainsAny(groupBy, `time(`) {
-			groupBy = strings.Replace(groupBy, ")", `")`, 1)
-			groupBy = strings.Replace(groupBy, "(", `("`, 1)
-		}
-
-	} else {
-
-		groupBy = `"` + groupBy + `"`
-	}
-
-	b.groupBy = append(b.groupBy, groupBy)
-
+	b.groupBy = append(b.groupBy, doubleQuote(groupBy))
 	return b
 }
 
@@ -302,4 +275,21 @@ func (l limit) string(series bool) string {
 		return "S" + ret
 	}
 	return ret
+}
+
+//
+func doubleQuote(field string) string {
+
+	if strings.HasPrefix(field, "time") {
+		return strings.Replace(field, `"`, "", -1)
+	}
+
+	re := regexp.MustCompile(functionRegex)
+	if re.MatchString(field) {
+		return re.ReplaceAllString(field, `("$1")`)
+	}
+
+	field = strings.TrimSuffix(field, `"`)
+	field = strings.TrimPrefix(field, `"`)
+	return `"` + field + `"`
 }
