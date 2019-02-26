@@ -70,7 +70,7 @@ func (f fields) string() string {
 		ret = append(ret, field.string())
 	}
 
-	return strings.Join(ret, ", ")
+	return "SELECT " + strings.Join(ret, ", ")
 }
 
 type field struct {
@@ -96,7 +96,7 @@ func (f field) string() string {
 		ret += " as " + doubleQuote(f.alias)
 	}
 
-	return "SELECT " + ret
+	return ret
 }
 
 // From

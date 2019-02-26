@@ -14,12 +14,12 @@ func TestSelect(t *testing.T) {
 	}
 
 	builder.AddSelect("col2", "")
-	if builder.String() != `SELECT func1("col1"), SELECT "col2"` {
+	if builder.String() != `SELECT func1("col1"), "col2"` {
 		t.Error("select field")
 	}
 
 	builder.AddSelect("col3", "col3alias")
-	if builder.String() != `SELECT func1("col1"), SELECT "col2", SELECT "col3" as "col3alias"` {
+	if builder.String() != `SELECT func1("col1"), "col2", "col3" as "col3alias"` {
 		t.Error("select field alias")
 	}
 }
