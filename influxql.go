@@ -155,6 +155,7 @@ type Where struct {
 	symbol string
 	value  interface{}
 	raw    string
+	or     conditions
 }
 
 func (b *Builder) AddWhere(field string, symbol string, value interface{}) *Builder {
