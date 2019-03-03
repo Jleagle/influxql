@@ -20,7 +20,8 @@ func NewBuilder() *Builder {
 type Builder struct {
 	fields      fields
 	from        from
-	groupBy     groupBy
+	groupBy     groupBys
+	orderBy     orderBys
 	where       conditions
 	fill        fill
 	limit       *limit
@@ -45,6 +46,10 @@ func (b Builder) String() string {
 
 	if len(b.groupBy) > 0 {
 		ret = append(ret, b.groupBy.string())
+	}
+
+	if len(b.orderBy) > 0 {
+		ret = append(ret, b.orderBy.string())
 	}
 
 	if b.fill != (fill{}) {
@@ -191,7 +196,7 @@ func (w Where) string() string {
 }
 
 // Group By
-type groupBy []string
+type groupBys []string
 
 func (b *Builder) AddGroupBy(groupBy string) *Builder {
 
@@ -205,9 +210,48 @@ func (b *Builder) AddGroupByTime(time string) *Builder {
 	return b
 }
 
-func (g groupBy) string() string {
+func (g groupBys) string() string {
 
 	return "GROUP BY " + strings.Join(g, ", ")
+}
+
+// Order By
+type orderBys []order
+
+type order struct {
+	field     string
+	ascending bool // true = ascending
+}
+
+func (o order) string() string {
+
+	ret := doubleQuote(o.field)
+
+	if o.ascending {
+		return ret + " ASC"
+	}
+
+	return ret + " DESC"
+}
+
+func (b *Builder) AddOrderBy(field string, ascending bool) *Builder {
+
+	b.orderBy = append(b.orderBy, order{
+		field:     field,
+		ascending: ascending,
+	})
+	return b
+}
+
+func (o orderBys) string() string {
+
+	var ret []string
+
+	for _, order := range o {
+		ret = append(ret, order.string())
+	}
+
+	return "ORDER BY " + strings.Join(ret, ", ")
 }
 
 // Fill

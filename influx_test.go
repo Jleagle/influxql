@@ -54,6 +54,26 @@ func TestGroupBy(t *testing.T) {
 	}
 }
 
+func TestOrderBy(t *testing.T) {
+
+	builder := NewBuilder()
+
+	builder.AddOrderBy("col1", true)
+	if builder.String() != `ORDER BY "col1" ASC` {
+		t.Error("order by asc")
+	}
+
+	builder.AddOrderBy("col1", false)
+	if builder.String() != `ORDER BY "col1" ASC, "col1" DESC` {
+		t.Error("order by desc")
+	}
+
+	builder.AddOrderBy("func1(col1)", true)
+	if builder.String() != `ORDER BY "col1" ASC, "col1" DESC, func1("col1") ASC` {
+		t.Error("order by func")
+	}
+}
+
 func TestWhere(t *testing.T) {
 
 	builder := NewBuilder()
