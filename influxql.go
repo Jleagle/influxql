@@ -12,12 +12,12 @@ const (
 	regexContainsFunction = `[a-zA-Z0-9_]+\(.*?\)`
 )
 
-func NewBuilder() *builder {
-	return &builder{}
+func NewBuilder() *Builder {
+	return &Builder{}
 }
 
 // Builder
-type builder struct {
+type Builder struct {
 	fields      fields
 	from        from
 	groupBy     groupBy
@@ -27,7 +27,7 @@ type builder struct {
 	seriesLimit *limit
 }
 
-func (b builder) String() string {
+func (b Builder) String() string {
 
 	var ret []string
 
@@ -81,7 +81,7 @@ type field struct {
 	alias  string
 }
 
-func (b *builder) AddSelect(column string, alias string) *builder {
+func (b *Builder) AddSelect(column string, alias string) *Builder {
 
 	b.fields = append(b.fields, field{
 		column: column,
@@ -109,7 +109,7 @@ type from struct {
 	measurement string
 }
 
-func (b *builder) SetFrom(db string, retention string, measurement string) *builder {
+func (b *Builder) SetFrom(db string, retention string, measurement string) *Builder {
 
 	b.from = from{
 		database:    db,
@@ -157,7 +157,7 @@ type Where struct {
 	raw    string
 }
 
-func (b *builder) AddWhere(field string, symbol string, value interface{}) *builder {
+func (b *Builder) AddWhere(field string, symbol string, value interface{}) *Builder {
 
 	b.where = append(b.where, Where{
 		field:  field,
@@ -168,7 +168,7 @@ func (b *builder) AddWhere(field string, symbol string, value interface{}) *buil
 	return b
 }
 
-func (b *builder) AddWhereRaw(raw string) *builder {
+func (b *Builder) AddWhereRaw(raw string) *Builder {
 
 	b.where = append(b.where, Where{raw: raw})
 	return b
@@ -192,13 +192,13 @@ func (w Where) string() string {
 // Group By
 type groupBy []string
 
-func (b *builder) AddGroupBy(groupBy string) *builder {
+func (b *Builder) AddGroupBy(groupBy string) *Builder {
 
 	b.groupBy = append(b.groupBy, doubleQuote(groupBy))
 	return b
 }
 
-func (b *builder) AddGroupByTime(time string) *builder {
+func (b *Builder) AddGroupByTime(time string) *Builder {
 
 	b.AddGroupBy("time(" + time + ")")
 	return b
@@ -215,31 +215,31 @@ type fill struct {
 	number int
 }
 
-func (b *builder) SetFillNull() *builder {
+func (b *Builder) SetFillNull() *Builder {
 
 	b.fill = fill{fill: "null"}
 	return b
 }
 
-func (b *builder) SetFillPrevious() *builder {
+func (b *Builder) SetFillPrevious() *Builder {
 
 	b.fill = fill{fill: "previous"}
 	return b
 }
 
-func (b *builder) SetFillNumber(number int) *builder {
+func (b *Builder) SetFillNumber(number int) *Builder {
 
 	b.fill = fill{fill: "number", number: number}
 	return b
 }
 
-func (b *builder) SetFillNone() *builder {
+func (b *Builder) SetFillNone() *Builder {
 
 	b.fill = fill{fill: "none"}
 	return b
 }
 
-func (b *builder) SetFillLinear() *builder {
+func (b *Builder) SetFillLinear() *Builder {
 
 	b.fill = fill{fill: "linear"}
 	return b
@@ -256,14 +256,14 @@ func (f fill) string() string {
 // Limit
 type limit int
 
-func (b *builder) SetLimit(l int) *builder {
+func (b *Builder) SetLimit(l int) *Builder {
 
 	x := limit(l)
 	b.limit = &x
 	return b
 }
 
-func (b *builder) SetSeriesLimit(l int) *builder {
+func (b *Builder) SetSeriesLimit(l int) *Builder {
 
 	x := limit(l)
 	b.seriesLimit = &x
