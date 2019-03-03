@@ -20,9 +20,9 @@ func NewBuilder() *Builder {
 type Builder struct {
 	fields      fields
 	from        from
-	groupBy     groupBys
-	orderBy     orderBys
-	where       conditions
+	groupBys    groupBys
+	orderBys    orderBys
+	conditions  conditions
 	fill        fill
 	limit       *limit
 	seriesLimit *limit
@@ -40,16 +40,16 @@ func (b Builder) String() string {
 		ret = append(ret, b.from.string())
 	}
 
-	if len(b.where) > 0 {
-		ret = append(ret, b.where.string())
+	if len(b.conditions) > 0 {
+		ret = append(ret, b.conditions.string())
 	}
 
-	if len(b.groupBy) > 0 {
-		ret = append(ret, b.groupBy.string())
+	if len(b.groupBys) > 0 {
+		ret = append(ret, b.groupBys.string())
 	}
 
-	if len(b.orderBy) > 0 {
-		ret = append(ret, b.orderBy.string())
+	if len(b.orderBys) > 0 {
+		ret = append(ret, b.orderBys.string())
 	}
 
 	if b.fill != (fill{}) {
@@ -165,7 +165,7 @@ type Where struct {
 
 func (b *Builder) AddWhere(field string, symbol string, value interface{}) *Builder {
 
-	b.where = append(b.where, Where{
+	b.conditions = append(b.conditions, Where{
 		field:  field,
 		symbol: symbol,
 		value:  value,
@@ -176,7 +176,7 @@ func (b *Builder) AddWhere(field string, symbol string, value interface{}) *Buil
 
 func (b *Builder) AddWhereRaw(raw string) *Builder {
 
-	b.where = append(b.where, Where{raw: raw})
+	b.conditions = append(b.conditions, Where{raw: raw})
 	return b
 }
 
@@ -200,7 +200,7 @@ type groupBys []string
 
 func (b *Builder) AddGroupBy(groupBy string) *Builder {
 
-	b.groupBy = append(b.groupBy, doubleQuote(groupBy))
+	b.groupBys = append(b.groupBys, doubleQuote(groupBy))
 	return b
 }
 
@@ -236,7 +236,7 @@ func (o order) string() string {
 
 func (b *Builder) AddOrderBy(field string, ascending bool) *Builder {
 
-	b.orderBy = append(b.orderBy, order{
+	b.orderBys = append(b.orderBys, order{
 		field:     field,
 		ascending: ascending,
 	})
