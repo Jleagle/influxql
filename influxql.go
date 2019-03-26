@@ -52,7 +52,7 @@ func (b Builder) String() string {
 		ret = append(ret, b.orderBys.string())
 	}
 
-	if b.fill.fill != "" {
+	if b.fill != "" {
 		ret = append(ret, b.fill.string())
 	}
 
@@ -255,47 +255,41 @@ func (o orderBys) string() string {
 }
 
 // Fill
-type fill struct {
-	fill   string
-	number *int
-}
+type fill string
 
 func (b *Builder) SetFillNull() *Builder {
 
-	b.fill = fill{fill: "null"}
+	b.fill = "null"
 	return b
 }
 
 func (b *Builder) SetFillPrevious() *Builder {
 
-	b.fill = fill{fill: "previous"}
+	b.fill = "previous"
 	return b
 }
 
 func (b *Builder) SetFillNumber(number int) *Builder {
 
-	b.fill = fill{fill: "number", number: &number}
+	b.fill = fill(strconv.Itoa(number))
 	return b
 }
 
 func (b *Builder) SetFillNone() *Builder {
 
-	b.fill = fill{fill: "none"}
+	b.fill = "none"
 	return b
 }
 
 func (b *Builder) SetFillLinear() *Builder {
 
-	b.fill = fill{fill: "linear"}
+	b.fill = "linear"
 	return b
 }
 
 func (f fill) string() string {
 
-	if f.number == nil {
-		return "FILL(" + f.fill + ")"
-	}
-	return "FILL(" + f.fill + ", " + strconv.Itoa(*f.number) + ")"
+	return "FILL(" + string(f) + ")"
 }
 
 // Limit
