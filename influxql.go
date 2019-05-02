@@ -112,7 +112,7 @@ type from struct {
 	database    string
 	retention   string
 	measurement string
-	builder     *builder
+	builder     *Builder
 }
 
 func (b *Builder) SetFrom(db string, retention string, measurement string) *Builder {
@@ -126,7 +126,7 @@ func (b *Builder) SetFrom(db string, retention string, measurement string) *Buil
 	return b
 }
 
-func (b *builder) SetFromSubQuery(builder *builder) *builder {
+func (b *Builder) SetFromSubQuery(builder *Builder) *Builder {
 
 	b.from = from{
 		builder: builder,
