@@ -112,6 +112,7 @@ type from struct {
 	database    string
 	retention   string
 	measurement string
+	builder     *builder
 }
 
 func (b *Builder) SetFrom(db string, retention string, measurement string) *Builder {
@@ -125,7 +126,20 @@ func (b *Builder) SetFrom(db string, retention string, measurement string) *Buil
 	return b
 }
 
+func (b *builder) SetFromSubQuery(builder *builder) *builder {
+
+	b.from = from{
+		builder: builder,
+	}
+
+	return b
+}
+
 func (f from) string() (str string) {
+
+	if f.builder != nil {
+		return "FROM (" + f.builder.String() + ")"
+	}
 
 	var ret []string
 	if f.database != "" {

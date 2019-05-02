@@ -35,7 +35,14 @@ func TestFrom(t *testing.T) {
 
 	builder.SetFrom("x", "y", "z")
 	if builder.String() != `FROM "x"."y"."z"` {
-		t.Error("from")
+		t.Error("from: " + builder.String())
+	}
+
+	builder2 := NewBuilder()
+
+	builder2.SetFromSubQuery(builder)
+	if builder2.String() != `FROM (FROM "x"."y"."z")` {
+		t.Error("from sub: " + builder2.String())
 	}
 }
 
