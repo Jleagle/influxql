@@ -116,8 +116,8 @@ func TestFill(t *testing.T) {
 	}
 
 	builder.SetFillNumber(2)
-	if builder.String() != `FILL(number, 2)` {
-		t.Error("fill number")
+	if builder.String() != `FILL(2)` {
+		t.Error("fill number: " + builder.String())
 	}
 }
 
