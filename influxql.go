@@ -336,7 +336,8 @@ func (l limit) string(series bool) string {
 //
 func doubleQuote(field string) string {
 
-	if strings.HasPrefix(field, "time") {
+	// Don't quote these
+	if strings.HasPrefix(field, "time") || strings.HasPrefix(field, "cumulative_sum") {
 		return strings.Replace(field, `"`, "", -1)
 	}
 
