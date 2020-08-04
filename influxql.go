@@ -341,6 +341,10 @@ func doubleQuote(field string) string {
 		return strings.Replace(field, `"`, "", -1)
 	}
 
+	if strings.HasPrefix(field, "/") && strings.HasSuffix(field, "/") {
+		return field
+	}
+
 	re := regexp.MustCompile(regexNeedsQuotes)
 	if re.MatchString(field) {
 		return re.ReplaceAllString(field, `("$1")`)

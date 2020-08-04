@@ -135,3 +135,13 @@ func TestLmits(t *testing.T) {
 		t.Error("series limit")
 	}
 }
+
+func TestRegex(t *testing.T) {
+
+	builder := NewBuilder()
+
+	builder.AddSelect("/^tag_/", "")
+	if builder.String() != `SELECT /^tag_/` {
+		t.Error("regex")
+	}
+}
